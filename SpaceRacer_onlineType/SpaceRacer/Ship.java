@@ -47,9 +47,9 @@ public class Ship extends GameObject {
         if (shootDelay > 0) shootDelay--;
     }
 
-    // ยิงได้ไหม: กดปุ่มยิง + ยังไม่ตาย + พ้นช่วงรอแล้ว
+    // ยิงอัตโนมัติทุก 12 เฟรม ขณะที่ยานยังมีชีวิต
     public boolean wantToShoot() {
-        return shoot && alive && shootDelay == 0;
+        return alive && shootDelay == 0;
     }
 
     public void resetShootDelay() {

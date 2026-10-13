@@ -26,7 +26,9 @@ public class GameServer extends Thread {
         while (running) {
             try {
                 Socket socket = serverSocket.accept(); // รอจนมีคนต่อเข้ามา
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+                // ปิด Nagle เพื่อส่งปุ่ม/สถานะเกมขนาดเล็กได้ทันที ไม่รอรวมแพ็กเก็ต
+                socket.setTcpNoDelay(true);
+                PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
                 // ห้องเต็ม หรือเกมเริ่มไปแล้ว -> ไม่รับ
                 if (panel.isStarted() || panel.getPlayerCount() >= 3) {

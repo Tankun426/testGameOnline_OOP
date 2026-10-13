@@ -199,24 +199,28 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
 
     // แปลงสถานะเกมเป็นข้อความ ส่งไปให้ Client (1 บรรทัด = ของ 1 ชิ้น)
     private String buildState() {
-        String s = "TIME " + timeLeft + "\n";
-        if (!started) s += "WAIT\n";
-        if (gameOver) s += "OVER\n";
+        StringBuilder s = new StringBuilder(512);
+        s.append("TIME ").append(timeLeft).append('\n');
+        if (!started) s.append("WAIT\n");
+        if (gameOver) s.append("OVER\n");
         for (Ship sh : ships) {
-            s += "SHIP " + sh.getId() + " " + sh.getX() + " " + sh.getY() + " "
-                    + sh.getScore() + " " + sh.getLives() + "\n";
+            s.append("SHIP ").append(sh.getId()).append(' ').append(sh.getX()).append(' ').append(sh.getY()).append(' ')
+                    .append(sh.getScore()).append(' ').append(sh.getLives()).append('\n');
         }
         for (Meteor m : meteors) {
-            s += "METEOR " + m.getX() + " " + m.getY() + " " + m.getWidth() + " " + m.getPicture() + "\n";
+            s.append("METEOR ").append(m.getX()).append(' ').append(m.getY()).append(' ')
+                    .append(m.getWidth()).append(' ').append(m.getPicture()).append('\n');
         }
         for (Bullet b : bullets) {
-            s += "BULLET " + b.getX() + " " + b.getY() + " " + b.getOwnerId() + "\n";
+            s.append("BULLET ").append(b.getX()).append(' ').append(b.getY()).append(' ')
+                    .append(b.getOwnerId()).append('\n');
         }
         for (Explosion e : explosions) {
-            s += "BOOM " + e.getX() + " " + e.getY() + " " + e.getWidth() + "\n";
+            s.append("BOOM ").append(e.getX()).append(' ').append(e.getY()).append(' ')
+                    .append(e.getWidth()).append('\n');
         }
-        s += "END\n";
-        return s;
+        s.append("END\n");
+        return s.toString();
     }
 
     // Client: รับสถานะเกมจาก GameClient มาเก็บไว้วาด

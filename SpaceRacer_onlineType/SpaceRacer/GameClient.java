@@ -14,6 +14,8 @@ public class GameClient extends Thread {
     public GameClient(String ip, int port) throws IOException {
         socket = new Socket();
         socket.connect(new InetSocketAddress(ip, port), 3000); // รอเชื่อมต่อไม่เกิน 3 วินาที
+        // ลดเวลารอส่งแพ็กเก็ตปุ่มและสถานะขนาดเล็ก
+        socket.setTcpNoDelay(true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
     }
@@ -28,10 +30,11 @@ public class GameClient extends Thread {
 
     public void run() {
         // ของที่จะวาดใน 1 เฟรม
-        CopyOnWriteArrayList<Ship> ships = new CopyOnWriteArrayList<Ship>();
-        CopyOnWriteArrayList<Meteor> meteors = new CopyOnWriteArrayList<Meteor>();
-        CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<Bullet>();
-        CopyOnWriteArrayList<Explosion> explosions = new CopyOnWriteArrayList<Explosion>();
+        // เก็บข้อมูลเฟรมใน ArrayList ระหว่าง parse เพื่อลดการคัดลอกซ้ำทุกครั้งที่ add()
+        java.util.ArrayList<Ship> ships = new java.util.ArrayList<Ship>();
+        java.util.ArrayList<Meteor> meteors = new java.util.ArrayList<Meteor>();
+        java.util.ArrayList<Bullet> bullets = new java.util.ArrayList<Bullet>();
+        java.util.ArrayList<Explosion> explosions = new java.util.ArrayList<Explosion>();
         int time = 0;
         boolean started = true;
         boolean over = false;
@@ -64,11 +67,14 @@ public class GameClient extends Thread {
                     explosions.add(new Explosion(Integer.parseInt(p[1]), Integer.parseInt(p[2]), Integer.parseInt(p[3])));
                 } else if (p[0].equals("END")) {
                     // ครบ 1 เฟรมแล้ว ส่งให้ GamePanel วาด แล้วเริ่มเก็บเฟรมใหม่
-                    panel.setGameState(ships, meteors, bullets, explosions, time, started, over);
-                    ships = new CopyOnWriteArrayList<Ship>();
-                    meteors = new CopyOnWriteArrayList<Meteor>();
-                    bullets = new CopyOnWriteArrayList<Bullet>();
-                    explosions = new CopyOnWriteArrayList<Explosion>();
+                    panel.setGameState(new CopyOnWriteArrayList<Ship>(ships),
+                            new CopyOnWriteArrayList<Meteor>(meteors),
+                            new CopyOnWriteArrayList<Bullet>(bullets),
+                            new CopyOnWriteArrayList<Explosion>(explosions), time, started, over);
+                    ships = new java.util.ArrayList<Ship>();
+                    meteors = new java.util.ArrayList<Meteor>();
+                    bullets = new java.util.ArrayList<Bullet>();
+                    explosions = new java.util.ArrayList<Explosion>();
                     started = true;
                     over = false;
                 }
