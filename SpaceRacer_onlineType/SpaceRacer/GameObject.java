@@ -23,17 +23,8 @@ public abstract class GameObject {
         if (!alive) {
             return;
         }
-        if (image != null && image.getWidth(null) > 0) {
             g.drawImage(image, x, y, width, height, null);
-        } else {
-            drawShape(g); // ถ้าไม่มีไฟล์รูป ให้วาดรูปทรงแทน
-        }
-    }
 
-    // รูปทรงสำรอง (คลาสลูก override ได้)
-    protected void drawShape(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.fillOval(x, y, width, height);
     }
 
     // กรอบสี่เหลี่ยมไว้เช็คการชน

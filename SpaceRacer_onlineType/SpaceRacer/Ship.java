@@ -5,9 +5,9 @@ import javax.swing.*;
 public class Ship extends GameObject {
     public static final Color[] COLORS = { Color.CYAN, Color.PINK, Color.GREEN };
     private static Image[] pictures = {
-        new ImageIcon("img/ship1.png").getImage(),
-        new ImageIcon("img/ship2.png").getImage(),
-        new ImageIcon("img/ship3.png").getImage()
+        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship1.png").getImage(),
+        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship2.png").getImage(),
+        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship3.png").getImage()
     };
 
     private int id;          // 0, 1, 2

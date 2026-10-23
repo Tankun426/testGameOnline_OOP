@@ -1,11 +1,12 @@
 import java.awt.*;
+import javax.swing.*;
 
-// กระสุน จำไว้ว่าเป็นของผู้เล่นคนไหน (ownerId) จะได้บวกคะแนนถูกคน
 public class Bullet extends GameObject {
     private int ownerId;
+    private static Image BulletPic = new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/WaLenti Cristiano Ronaldinho .jpg").getImage();
 
     public Bullet(int x, int y, int ownerId) {
-        super(x, y, 6, 15, null);
+        super(x, y, 50, 70, BulletPic);
         this.ownerId = ownerId;
         this.speed = 12;
     }
@@ -15,11 +16,6 @@ public class Bullet extends GameObject {
         if (y + height < 0) {
             alive = false; // พ้นจอแล้ว
         }
-    }
-
-    protected void drawShape(Graphics g) {
-        g.setColor(Ship.COLORS[ownerId]);
-        g.fillRect(x, y, width, height);
     }
 
     public int getOwnerId() {
