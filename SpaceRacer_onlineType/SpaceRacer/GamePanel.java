@@ -45,7 +45,7 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         { KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_P }
     };
 
-    private Image background = new ImageIcon("img/background.jpg").getImage();
+    private Image background = new ImageIcon(getClass().getResource("/img/bg1.jpg")).getImage();
     private int[] starX = new int[100];
     private int[] starY = new int[100];
     private JButton startButton = new JButton("START GAME");
