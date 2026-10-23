@@ -10,7 +10,7 @@ public class Meteor extends GameObject {
     // โหลดรูป meteor1.png - meteor10.png ครั้งเดียวตอนเริ่มโปรแกรม
     static {
         for (int i = 0; i < 10; i++) {
-            pictures[i] = new ImageIcon("img/meteor" + (i + 1) + ".png").getImage();
+            pictures[i] = new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/meteor" + (i + 1) + ".png").getImage();
         }
     }
 
