@@ -5,22 +5,36 @@ import javax.swing.*;
 
 // หน้าเมนู: เลือกเล่น Offline (Solo/Duo/Trio) หรือ Online ผ่าน LAN (Host/Join)
 public class MenuPanel extends JPanel {
-    private Image logo = new ImageIcon("img/logo.png").getImage();
+    private Image logo = new ImageIcon(getClass().getResource("img/logo3.png")).getImage();
     private JTextField portField = new JTextField("5000");
     private JTextField ipField = new JTextField("192.168.1.");
+    private Image background = new ImageIcon(getClass().getResource("/img/bg2.jpg")).getImage();
+    private Image btsolo = new ImageIcon(getClass().getResource("img/solo.png")).getImage();
+    Image S1 = btsolo.getScaledInstance(140, 70, Image.SCALE_SMOOTH);
+   
+    private Image btduo = new ImageIcon(getClass().getResource("img/duo.png")).getImage();
 
+    private Image bttrio = new ImageIcon(getClass().getResource("img/trio.png")).getImage();
+    Image S2 = btduo.getScaledInstance(140, 70, Image.SCALE_SMOOTH);
+    Image S3 = bttrio.getScaledInstance(140, 70, Image.SCALE_SMOOTH);
     public MenuPanel(final MainGame game) {
         setPreferredSize(new Dimension(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT));
         setBackground(Color.BLACK);
         setLayout(null);
 
         // ---------- Offline ----------
-        JButton soloButton = new JButton("Solo");
-        JButton duoButton = new JButton("Duo");
-        JButton trioButton = new JButton("Trio");
-        soloButton.setBounds(220, 230, 140, 45);
-        duoButton.setBounds(380, 230, 140, 45);
-        trioButton.setBounds(540, 230, 140, 45);
+        JButton soloButton = new JButton(new ImageIcon(S1));
+        JButton duoButton = new JButton(new ImageIcon(S2));
+        JButton trioButton = new JButton(new ImageIcon(S3));
+        soloButton.setBounds(220, 230, 140, 70);
+        soloButton.setContentAreaFilled(false);
+        soloButton.setBorderPainted(false);
+        duoButton.setBounds(380, 230, 140, 70);
+        duoButton.setContentAreaFilled(false);
+        duoButton.setBorderPainted(false);
+        trioButton.setBounds(540, 230, 140, 70);
+        trioButton.setContentAreaFilled(false);
+        trioButton.setBorderPainted(false);
 
         soloButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -88,10 +102,14 @@ public class MenuPanel extends JPanel {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+  if (background.getWidth(null) > 0) {
+            g.drawImage(background, 0, 0, MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, null);
+        } else {
+            
+        }
         // ชื่อเกม
         if (logo.getWidth(null) > 0) {
-            g.drawImage(logo, 250, 20, 400, 150, null);
+            g.drawImage(logo, 250, 10, 400, 200, null);
         } else {
             g.setColor(Color.ORANGE);
             g.setFont(new Font("Arial", Font.BOLD, 70));
