@@ -1,16 +1,18 @@
+
 import java.io.IOException;
 import javax.swing.*;
 
 // หน้าต่างหลักของเกม คอยสลับหน้าจอ (เมนู <-> เล่นเกม)
 public class MainGame extends JFrame {
+
     public static final int GAME_WIDTH = 900;
     public static final int GAME_HEIGHT = 650;
 
     public MainGame() {
         setTitle("Space Racer");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        showMenu();
+        showTitle();
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -23,6 +25,10 @@ public class MainGame extends JFrame {
         revalidate();
         repaint();
         panel.requestFocusInWindow(); // ให้หน้าใหม่รับการกดปุ่มคีย์บอร์ด
+    }
+
+    public void showTitle() {
+        changePanel(new TitlePanel(this));
     }
 
     public void showMenu() {

@@ -4,18 +4,16 @@ import javax.swing.*;
 
 // อุกกาบาต: สุ่มขนาด 3 แบบ และสุ่มความเร็ว 3 ระดับ
 public class Meteor extends GameObject {
-    private static Image[] pictures = new Image[10];
+    private static Image[] pictures = new Image[27];
     private static Random random = new Random();
-
-    // โหลดรูป meteor1.png - meteor10.png ครั้งเดียวตอนเริ่มโปรแกรม
     static {
-        for (int i = 0; i < 10; i++) {
-            pictures[i] = new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/meteor" + (i + 1) + ".png").getImage();
+        for (int i = 0; i < 27; i++) {
+            pictures[i] = new ImageIcon(
+                    Meteor.class.getResource("img/meteoFriend" + (i + 1) + ".png")).getImage();
         }
     }
 
-    private int picture;     // ใช้รูปที่เท่าไหร่ (0-9)
-    private int speedLevel;  // ระดับความเร็ว 1-3
+    private int picture;
 
     // ใช้ตอนสร้างอุกกาบาตใหม่ (เครื่อง Host / Offline)
     public Meteor() {
@@ -43,10 +41,10 @@ public class Meteor extends GameObject {
         x = random.nextInt(MainGame.GAME_WIDTH - width);
         y = -height - random.nextInt(400);
 
-        speedLevel = random.nextInt(3) + 1;  // สุ่มระดับ 1, 2, 3
-        speed = speedLevel * 2;              // ระดับ 1 = 2, ระดับ 2 = 4, ระดับ 3 = 6
+        int speedLevel = random.nextInt(3) + 1; // สุ่มระดับ 1, 2, 3
+        speed = speedLevel * 2;                // ระดับ 1 = 2, ระดับ 2 = 4, ระดับ 3 = 6
 
-        picture = random.nextInt(10);
+        picture = random.nextInt(27);
         image = pictures[picture];
         alive = true;
     }
@@ -72,10 +70,5 @@ public class Meteor extends GameObject {
 
     public int getPicture() {
         return picture;
-    }
-
-    protected void drawShape(Graphics g) {
-        g.setColor(Color.GRAY);
-        g.fillOval(x, y, width, height);
     }
 }

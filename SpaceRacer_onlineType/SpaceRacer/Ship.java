@@ -5,9 +5,9 @@ import javax.swing.*;
 public class Ship extends GameObject {
     public static final Color[] COLORS = { Color.CYAN, Color.PINK, Color.GREEN };
     private static Image[] pictures = {
-        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship1.png").getImage(),
-        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship2.png").getImage(),
-        new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/Ship3.png").getImage()
+        new ImageIcon(Ship.class.getResource("/img/Ship1.png")).getImage(),
+        new ImageIcon(Ship.class.getResource("/img/Ship2.png")).getImage(),
+        new ImageIcon(Ship.class.getResource("/img/Ship3.png")).getImage()
     };
 
     private int id;          // 0, 1, 2
@@ -16,7 +16,7 @@ public class Ship extends GameObject {
     private int shootDelay = 0; // กันยิงรัวเกินไป
 
     // ปุ่มที่ผู้เล่นคนนี้กดอยู่ (มาจากคีย์บอร์ด หรือมาจากเครื่องอื่นผ่าน LAN)
-    private volatile boolean up, down, left, right, shoot;
+    private volatile boolean up, down, left, right;
 
     public Ship(int id, int x, int y) {
         super(x, y, 50, 50, pictures[id]);
@@ -24,12 +24,11 @@ public class Ship extends GameObject {
         this.speed = 6;
     }
 
-    public void setInput(boolean up, boolean down, boolean left, boolean right, boolean shoot) {
+    public void setInput(boolean up, boolean down, boolean left, boolean right) {
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
-        this.shoot = shoot;
     }
 
     public void move() {
@@ -77,11 +76,4 @@ public class Ship extends GameObject {
     public String getName() { return "Player " + (id + 1); }
     public Color getColor() { return COLORS[id]; }
 
-    // ไม่มีรูปยาน ให้วาดสามเหลี่ยมสีของผู้เล่นแทน
-    protected void drawShape(Graphics g) {
-        int[] px = { x + width / 2, x, x + width };
-        int[] py = { y, y + height, y + height };
-        g.setColor(getColor());
-        g.fillPolygon(px, py, 3);
-    }
 }

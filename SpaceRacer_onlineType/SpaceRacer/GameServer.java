@@ -50,7 +50,7 @@ public class GameServer extends Thread {
         }
     }
 
-    // Thread รับปุ่มจากเพื่อน 1 คน ข้อความหน้าตาแบบ "KEY 0 1 0 0 1" (ขึ้น ลง ซ้าย ขวา ยิง)
+    // Thread รับปุ่มเคลื่อนที่จากเพื่อน 1 คน ข้อความหน้าตาแบบ "KEY 0 1 0 0"
     private void listenToPlayer(final Socket socket, final int id) {
         Thread receiver = new Thread(new Runnable() {
             public void run() {
@@ -59,9 +59,9 @@ public class GameServer extends Thread {
                     String line;
                     while ((line = in.readLine()) != null) {
                         String[] p = line.split(" ");
-                        if (p[0].equals("KEY") && p.length == 6) {
+                        if (p[0].equals("KEY") && p.length == 5) {
                             panel.getShip(id).setInput(p[1].equals("1"), p[2].equals("1"),
-                                    p[3].equals("1"), p[4].equals("1"), p[5].equals("1"));
+                                    p[3].equals("1"), p[4].equals("1"));
                         }
                     }
                 } catch (IOException e) {

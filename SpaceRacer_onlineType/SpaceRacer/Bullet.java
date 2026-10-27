@@ -3,10 +3,11 @@ import javax.swing.*;
 
 public class Bullet extends GameObject {
     private int ownerId;
-    private static Image BulletPic = new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/WaLenti Cristiano Ronaldinho .jpg").getImage();
+    private static Image BulletPic = new ImageIcon(
+            Bullet.class.getResource("/img/WaLenti Cristiano Ronaldinho .jpg")).getImage();
 
     public Bullet(int x, int y, int ownerId) {
-        super(x, y, 50, 70, BulletPic);
+        super(x, y, 20, 30, BulletPic);
         this.ownerId = ownerId;
         this.speed = 12;
     }
