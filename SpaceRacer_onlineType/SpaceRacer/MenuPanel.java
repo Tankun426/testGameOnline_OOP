@@ -6,7 +6,7 @@ public class MenuPanel extends JPanel {
     private Image logo = new ImageIcon(getClass().getResource("img/logo3.png")).getImage();
     private JTextField portField = new JTextField("5000");
     private JTextField ipField = new JTextField("192.168.1.");
-    private Image background = new ImageIcon(getClass().getResource("img/bg2.jpg")).getImage();
+    private Image background = new ImageIcon(getClass().getResource("img/bg1.jpg")).getImage();
     private JButton modeSelector;
     private String selectedMode = "Offline";
     private JPanel offlinePanel;
