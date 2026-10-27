@@ -23,8 +23,7 @@ public abstract class GameObject {
         if (!alive) {
             return;
         }
-            g.drawImage(image, x, y, width, height, null);
-
+        g.drawImage(image, x, y, width, height, null);
     }
 
     // กรอบสี่เหลี่ยมไว้เช็คการชน
@@ -37,5 +36,4 @@ public abstract class GameObject {
     public int getX() { return x; }
     public int getY() { return y; }
     public int getWidth() { return width; }
-    public int getHeight() { return height; }
 }

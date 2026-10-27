@@ -3,7 +3,8 @@ import javax.swing.*;
 
 // ภาพระเบิดตอนยิงโดน แสดงสักพักแล้วหายไป
 public class Explosion extends GameObject {
-    private static Image bombPic = new ImageIcon("SpaceRacer_onlineType/SpaceRacer/img/bomb.gif").getImage();
+    private static Image bombPic = new ImageIcon(
+            Explosion.class.getResource("/img/bomb.gif")).getImage();
     private int time = 20; // แสดง 20 รอบของ game loop
 
     public Explosion(int x, int y, int size) {
@@ -17,8 +18,4 @@ public class Explosion extends GameObject {
         }
     }
 
-    protected void drawShape(Graphics g) {
-        g.setColor(Color.ORANGE);
-        g.fillOval(x, y, width, height);
-    }
 }

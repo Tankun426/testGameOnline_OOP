@@ -38,14 +38,14 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
 
     // ---------- คีย์บอร์ด ----------
     private boolean[] keys = new boolean[256];
-    // ชุดปุ่ม: { ขึ้น, ลง, ซ้าย, ขวา, ยิง }
+    // ชุดปุ่มเคลื่อนที่: { ขึ้น, ลง, ซ้าย, ขวา }
     private int[][] keyMap = {
-        { KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE },
-        { KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER },
-        { KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_P }
+        { KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D },
+        { KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT },
+        { KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L }
     };
 
-    private Image background = new ImageIcon("img/background.jpg").getImage();
+    private Image background = new ImageIcon(getClass().getResource("img/bg1.jpg")).getImage();
     private int[] starX = new int[100];
     private int[] starY = new int[100];
     private JButton startButton = new JButton("START GAME");
@@ -126,11 +126,11 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         if (mode == OFFLINE) {
             for (int i = 0; i < ships.size(); i++) {
                 int[] k = keyMap[i];
-                ships.get(i).setInput(keys[k[0]], keys[k[1]], keys[k[2]], keys[k[3]], keys[k[4]]);
+                ships.get(i).setInput(keys[k[0]], keys[k[1]], keys[k[2]], keys[k[3]]);
             }
         } else {
             // Host = ยานคนที่ 0 (ยานคนอื่นได้ปุ่มมาจาก GameServer)
-            ships.get(0).setInput(onlineKey(0), onlineKey(1), onlineKey(2), onlineKey(3), onlineKey(4));
+            ships.get(0).setInput(onlineKey(0), onlineKey(1), onlineKey(2), onlineKey(3));
         }
 
         // 2) ขยับยาน + ยิง
@@ -237,15 +237,15 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         repaint();
     }
 
-    // เล่น Online ใช้ได้ทั้ง WASD+SPACE และ ลูกศร+ENTER
+    // เล่น Online ใช้ได้ทั้ง WASD และปุ่มลูกศร
     private boolean onlineKey(int action) {
         return keys[keyMap[0][action]] || keys[keyMap[1][action]];
     }
 
-    // Client: ส่งปุ่มที่กดอยู่ไปให้ Host เช่น "KEY 0 1 0 0 1"
+    // Client: ส่งปุ่มเคลื่อนที่ไปให้ Host เช่น "KEY 0 1 0 0"
     private void sendKeysToHost() {
         String msg = "KEY";
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             msg += onlineKey(i) ? " 1" : " 0";
         }
         client.send(msg);
