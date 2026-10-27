@@ -29,14 +29,8 @@ public class Meteor extends GameObject {
 
     // สุ่มใหม่แล้วเริ่มตกจากข้างบน (คล้าย RainLetter)
     public void reset() {
-        int type = random.nextInt(3);
-        if (type == 0) {
-            width = 35;   // เล็ก
-        } else if (type == 1) {
-            width = 55;   // กลาง
-        } else {
-            width = 80;   // ใหญ่
-        }
+        width = random.nextInt(61) + 20;
+
         height = width;
         x = random.nextInt(MainGame.GAME_WIDTH - width);
         y = -height - random.nextInt(400);
@@ -59,9 +53,9 @@ public class Meteor extends GameObject {
 
     // ลูกเล็กยิงยากกว่า ได้คะแนนมากกว่า
     public int getPoints() {
-        if (width == 35) {
+        if (width <= 35) {
             return 30;
-        } else if (width == 55) {
+        } else if (width <= 55 && width >= 36 ) {
             return 20;
         } else {
             return 10;
