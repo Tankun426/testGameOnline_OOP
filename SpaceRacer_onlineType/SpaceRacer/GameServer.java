@@ -3,10 +3,6 @@ import java.net.*;
 import java.util.Enumeration;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// Server (ทำงานบนเครื่อง Host) — แนวเดียวกับ ChatServer ใน ch08
-// - Thread นี้คอย accept() รอเพื่อนเข้าห้อง (ไม่เกิน 3 คนรวม Host)
-// - เพื่อนแต่ละคนมี Thread ของตัวเองคอยรับปุ่มที่กด
-// - broadcast() ส่งสถานะเกมไปให้ทุกเครื่อง
 public class GameServer extends Thread {
     private ServerSocket serverSocket;
     private GamePanel panel;
