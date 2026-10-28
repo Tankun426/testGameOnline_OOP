@@ -6,7 +6,6 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-// หน้าเริ่มเกม: แสดงภาพ title และกดปุ่ม START เพื่อไปหน้าเมนู
 public class TitlePanel extends JPanel {
     private final MainGame game;
     private final Image titleImage;
@@ -22,7 +21,6 @@ public class TitlePanel extends JPanel {
         setPreferredSize(new Dimension(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT));
         setLayout(null);
 
-        // ปุ่มใสทับบริเวณ START ที่อยู่ในภาพ
         JButton startButton = new JButton();
         startButton.setBounds(335, 515, 230, 95);
         startButton.setOpaque(false);

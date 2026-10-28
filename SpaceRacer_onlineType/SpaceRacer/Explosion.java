@@ -5,7 +5,7 @@ import javax.swing.*;
 public class Explosion extends GameObject {
     private static Image bombPic = new ImageIcon(
             Explosion.class.getResource("/img/bomb.gif")).getImage();
-    private int time = 20; // แสดง 20 รอบของ game loop
+    private int time = 20;
 
     public Explosion(int x, int y, int size) {
         super(x, y, size, size, bombPic);

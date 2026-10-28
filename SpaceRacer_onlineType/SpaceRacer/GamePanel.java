@@ -7,10 +7,6 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 
-// หน้าเล่นเกม ใช้ได้ 3 แบบ
-//   OFFLINE : เล่นเครื่องเดียว 1-3 คน
-//   HOST    : เครื่องนี้คำนวณเกมเอง แล้วส่งสถานะให้เพื่อน
-//   CLIENT  : เครื่องนี้แค่ส่งปุ่มไปให้ Host และวาดตามที่ Host ส่งมา
 public class GamePanel extends JPanel implements KeyListener, Runnable {
     public static final int OFFLINE = 0, HOST = 1, CLIENT = 2;
     public static final int GAME_TIME = 180; // 3 นาที
@@ -19,16 +15,13 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
     private int mode;
     private GameServer server;
     private GameClient client;
-    private int myId = 0; // ยานของเครื่องนี้คือคนที่เท่าไหร่
+    private int myId = 0;
 
-    // ---------- ของในเกม ----------
-    // CopyOnWriteArrayList = ArrayList ที่หลาย Thread ใช้พร้อมกันได้ไม่ error
     private CopyOnWriteArrayList<Ship> ships = new CopyOnWriteArrayList<Ship>();
     private CopyOnWriteArrayList<Meteor> meteors = new CopyOnWriteArrayList<Meteor>();
     private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<Bullet>();
     private CopyOnWriteArrayList<Explosion> explosions = new CopyOnWriteArrayList<Explosion>();
 
-    // ---------- สถานะเกม (volatile = ทุก Thread เห็นค่าล่าสุด) ----------
     private volatile int timeLeft = GAME_TIME;
     private volatile boolean started = false;
     private volatile boolean gameOver = false;
@@ -36,9 +29,8 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
     private volatile long startTime;
     private volatile String message = "";
 
-    // ---------- คีย์บอร์ด ----------
     private boolean[] keys = new boolean[256];
-    // ชุดปุ่มเคลื่อนที่: { ขึ้น, ลง, ซ้าย, ขวา }
+
     private int[][] keyMap = {
             { KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D },
             { KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT },
@@ -49,7 +41,7 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
     private int[] starX = new int[100];
     private int[] starY = new int[100];
     private JButton startButton = new JButton("START GAME");
-    private String myIP = GameServer.getMyIP(); // IP ของเครื่องนี้ ไว้บอกเพื่อน
+    private String myIP = GameServer.getMyIP();
 
     public GamePanel(MainGame game, int mode, int numberOfPlayers) {
         this.game = game;
@@ -60,7 +52,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         setFocusable(true);
         addKeyListener(this);
 
-        // สุ่มตำแหน่งดาวพื้นหลัง
         Random random = new Random();
         for (int i = 0; i < starX.length; i++) {
             starX[i] = random.nextInt(MainGame.GAME_WIDTH);
@@ -68,7 +59,7 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         }
 
         if (mode == CLIENT) {
-            return; // Client ไม่ต้องสร้างอะไร รอข้อมูลจาก Host อย่างเดียว
+            return;
         }
 
         for (int i = 0; i < numberOfPlayers; i++) {
@@ -81,7 +72,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         if (mode == OFFLINE) {
             startGame();
         } else {
-            // Host: มีปุ่ม START ให้กดเมื่อเพื่อนเข้าครบ
             startButton.setBounds(350, 420, 200, 50);
             startButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -91,7 +81,7 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             add(startButton);
         }
 
-        new Thread(this).start(); // เริ่ม game loop
+        new Thread(this).start();
     }
 
     private void startGame() {
@@ -101,8 +91,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         requestFocusInWindow();
     }
 
-    // ================= GAME LOOP (Thread) — ทำงานบน OFFLINE และ HOST
-    // =================
     public void run() {
         while (running) {
             if (started) {
@@ -112,29 +100,26 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
                 server.broadcast(buildState());
             }
             if (gameOver) {
-                running = false; // ส่งสถานะจบเกมไปแล้ว หยุด loop
+                running = false;
             }
             repaint();
             try {
-                Thread.sleep(20); // ประมาณ 50 ครั้ง/วินาที
+                Thread.sleep(20);
             } catch (InterruptedException e) {
             }
         }
     }
 
     private void update() {
-        // 1) เอาปุ่มที่กดไปใส่ให้ยาน
         if (mode == OFFLINE) {
             for (int i = 0; i < ships.size(); i++) {
                 int[] k = keyMap[i];
                 ships.get(i).setInput(keys[k[0]], keys[k[1]], keys[k[2]], keys[k[3]]);
             }
         } else {
-            // Host = ยานคนที่ 0 (ยานคนอื่นได้ปุ่มมาจาก GameServer)
             ships.get(0).setInput(onlineKey(0), onlineKey(1), onlineKey(2), onlineKey(3));
         }
 
-        // 2) ขยับยาน + ยิง
         for (Ship s : ships) {
             if (!s.isAlive())
                 continue;
@@ -145,7 +130,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // 3) ขยับของอื่น ๆ
         for (Bullet b : bullets)
             b.move();
         for (Explosion e : explosions)
@@ -156,7 +140,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
                 m.reset();
         }
 
-        // 4) กระสุนชนอุกกาบาต -> ได้คะแนน
         for (Bullet b : bullets) {
             for (Meteor m : meteors) {
                 if (b.isAlive() && b.getBounds().intersects(m.getBounds())) {
@@ -168,7 +151,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // 5) อุกกาบาตชนยาน -> เสีย 1 ชีวิต
         for (Ship s : ships) {
             for (Meteor m : meteors) {
                 if (s.isAlive() && s.getBounds().intersects(m.getBounds())) {
@@ -179,7 +161,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // 6) ลบของที่ใช้แล้วออก
         for (Bullet b : bullets) {
             if (!b.isAlive())
                 bullets.remove(b);
@@ -189,7 +170,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
                 explosions.remove(e);
         }
 
-        // 7) นับเวลา + เช็คจบเกม (หมดเวลา หรือ ตายหมดทุกคน)
         timeLeft = GAME_TIME - (int) ((System.currentTimeMillis() - startTime) / 1000);
         if (timeLeft < 0)
             timeLeft = 0;
@@ -204,9 +184,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         }
     }
 
-    // ================= ส่วนของ Online =================
-
-    // แปลงสถานะเกมเป็นข้อความ ส่งไปให้ Client (1 บรรทัด = ของ 1 ชิ้น)
     private String buildState() {
         StringBuilder s = new StringBuilder(512);
         s.append("TIME ").append(timeLeft).append('\n');
@@ -234,7 +211,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         return s.toString();
     }
 
-    // Client: รับสถานะเกมจาก GameClient มาเก็บไว้วาด
     public void setGameState(CopyOnWriteArrayList<Ship> ships, CopyOnWriteArrayList<Meteor> meteors,
             CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Explosion> explosions,
             int timeLeft, boolean started, boolean gameOver) {
@@ -248,12 +224,10 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         repaint();
     }
 
-    // เล่น Online ใช้ได้ทั้ง WASD และปุ่มลูกศร
     private boolean onlineKey(int action) {
         return keys[keyMap[0][action]] || keys[keyMap[1][action]];
     }
 
-    // Client: ส่งปุ่มเคลื่อนที่ไปให้ Host เช่น "KEY 0 1 0 0"
     private void sendKeysToHost() {
         String msg = "KEY";
         for (int i = 0; i < 4; i++) {
@@ -262,7 +236,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         client.send(msg);
     }
 
-    // Server เรียกตอนมีเพื่อนเข้าห้อง: สร้างยานใหม่ คืนค่าเลขผู้เล่น
     public synchronized int addShip() {
         int id = ships.size();
         ships.add(new Ship(id, 125 + id * 300, MainGame.GAME_HEIGHT - 80));
@@ -294,13 +267,12 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
     }
 
     public void showMessage(String text) {
-        if (message.equals("")) { // เก็บข้อความแรกไว้ ไม่ให้ข้อความหลังทับ
+        if (message.equals("")) {
             message = text;
         }
         repaint();
     }
 
-    // กลับเมนู: ปิด loop และปิดการเชื่อมต่อ
     private void backToMenu() {
         running = false;
         if (server != null)
@@ -310,11 +282,9 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         game.showMenu();
     }
 
-    // ================= วาด =================
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // พื้นหลัง
         if (background.getWidth(null) > 0) {
             g.drawImage(background, 0, 0, MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, null);
         } else {
@@ -324,7 +294,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // ของในเกม (ทุกตัวเรียก draw() เหมือนกัน = Polymorphism)
         for (Meteor m : meteors)
             m.draw(g);
         for (Bullet b : bullets)
@@ -334,7 +303,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         for (Ship s : ships)
             s.draw(g);
 
-        // ป้าย YOU บนยานตัวเอง (เฉพาะ Online)
         g.setFont(new Font("Arial", Font.BOLD, 14));
         if (mode != OFFLINE) {
             for (Ship s : ships) {
@@ -345,7 +313,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // คะแนน + ชีวิต
         g.setFont(new Font("Arial", Font.BOLD, 18));
         int row = 0;
         for (Ship s : ships) {
@@ -358,7 +325,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             row++;
         }
 
-        // เวลา
         int min = timeLeft / 60;
         int sec = timeLeft % 60;
         g.setColor(Color.WHITE);
@@ -367,7 +333,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
 
         g.setFont(new Font("Arial", Font.BOLD, 26));
 
-        // ห้องรอ (ยังไม่เริ่มเกม)
         if (!started && message.equals("")) {
             g.setColor(Color.YELLOW);
             if (mode == HOST && server != null) {
@@ -379,7 +344,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             }
         }
 
-        // ข้อความ error เช่น หลุดการเชื่อมต่อ
         if (!message.equals("")) {
             g.setColor(Color.RED);
             g.drawString(message, 200, 300);
@@ -387,17 +351,14 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
             g.drawString("Press ESC to return to menu", 270, 350);
         }
 
-        // จบเกม: แสดงอันดับ
         if (gameOver) {
             drawResult(g);
         }
     }
 
-    // เรียงคะแนนมาก -> น้อย ด้วย bubble sort แล้วแสดงอันดับ
     private void drawResult(Graphics g) {
     Ship[] rank = ships.toArray(new Ship[0]);
 
-    // เรียงคะแนนจากมากไปน้อย
     for (int i = 0; i < rank.length - 1; i++) {
         for (int j = 0; j < rank.length - 1 - i; j++) {
             if (rank[j].getScore() < rank[j + 1].getScore()) {
@@ -414,7 +375,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         RenderingHints.VALUE_ANTIALIAS_ON
     );
 
-    // กรอบหน้าผลการแข่งขัน
     g2.setColor(new Color(40, 40, 40, 220));
     g2.fillRect(80, 90, 740, 460);
 
@@ -426,7 +386,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
     g2.setColor(Color.YELLOW);
     drawCenteredText(g2, "GAME OVER", 450, 155);
 
-    // อันดับ 1 อยู่กลาง อันดับ 2 ซ้าย อันดับ 3 ขวา
     int[] xPositions = { 375, 160, 590 };
     int[] topPositions = { 285, 355, 385 };
     int podiumWidth = 135;
@@ -438,7 +397,6 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         int height = podiumBottom - top;
         boolean isWinner = (i == 0);
 
-        // วาดแท่น
         g2.setColor(Color.WHITE);
         g2.fillRect(x, top, podiumWidth, height);
 
@@ -446,15 +404,12 @@ public class GamePanel extends JPanel implements KeyListener, Runnable {
         g2.setStroke(new BasicStroke(isWinner ? 4 : 2));
         g2.drawRect(x, top, podiumWidth, height);
 
-        // วาดยานของผู้เล่น
         g2.drawImage(rank[i].image, x + 43, top - 65, 50, 50, null);
 
-        // ชื่อผู้เล่น
         g2.setFont(new Font("Arial", Font.PLAIN, 17));
         g2.setColor(Color.BLACK);
         drawCenteredText(g2, rank[i].getName(), x + podiumWidth / 2, top + 32);
 
-        // ลำดับและคะแนน
         g2.setFont(new Font("Arial", Font.PLAIN, 38));
         drawCenteredText(g2, (i + 1) + ".", x + podiumWidth / 2, top + 105);
 
@@ -480,7 +435,6 @@ private void drawCenteredText(Graphics2D g, String text, int centerX, int y) {
     g.drawString(text, x, y);
 }
 
-    // ================= คีย์บอร์ด =================
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             backToMenu();

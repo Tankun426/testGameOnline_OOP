@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 
-// ยานอวกาศ + ข้อมูลผู้เล่น (ชื่อ คะแนน ชีวิต) รวมไว้ในคลาสเดียว
 public class Ship extends GameObject {
     public static final Color[] COLORS = { Color.CYAN, Color.PINK, Color.GREEN };
     private static Image[] pictures = {
@@ -10,12 +9,11 @@ public class Ship extends GameObject {
         new ImageIcon(Ship.class.getResource("/img/Ship3.png")).getImage()
     };
 
-    private int id;          // 0, 1, 2
+    private int id;
     private int score = 0;
     private int lives = 3;
-    private int shootDelay = 0; // กันยิงรัวเกินไป
+    private int shootDelay = 0;
 
-    // ปุ่มที่ผู้เล่นคนนี้กดอยู่ (มาจากคีย์บอร์ด หรือมาจากเครื่องอื่นผ่าน LAN)
     private volatile boolean up, down, left, right;
 
     public Ship(int id, int x, int y) {
@@ -46,7 +44,6 @@ public class Ship extends GameObject {
         if (shootDelay > 0) shootDelay--;
     }
 
-    // ยิงอัตโนมัติทุก 12 เฟรม ขณะที่ยานยังมีชีวิต
     public boolean wantToShoot() {
         return alive && shootDelay == 0;
     }

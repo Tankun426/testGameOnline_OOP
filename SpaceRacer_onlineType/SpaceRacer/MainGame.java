@@ -2,7 +2,6 @@
 import java.io.IOException;
 import javax.swing.*;
 
-// หน้าต่างหลักของเกม คอยสลับหน้าจอ (เมนู <-> เล่นเกม)
 public class MainGame extends JFrame {
 
     public static final int GAME_WIDTH = 900;
@@ -24,7 +23,7 @@ public class MainGame extends JFrame {
         pack();
         revalidate();
         repaint();
-        panel.requestFocusInWindow(); // ให้หน้าใหม่รับการกดปุ่มคีย์บอร์ด
+        panel.requestFocusInWindow();
     }
 
     public void showTitle() {
@@ -35,12 +34,10 @@ public class MainGame extends JFrame {
         changePanel(new MenuPanel(this));
     }
 
-    // เล่นเครื่องเดียว 1-3 คน
     public void startOffline(int numberOfPlayers) {
         changePanel(new GamePanel(this, GamePanel.OFFLINE, numberOfPlayers));
     }
 
-    // เครื่องนี้เป็น Host: เปิด Server รอเพื่อนเข้ามา
     public void startHost(int port) {
         try {
             GamePanel panel = new GamePanel(this, GamePanel.HOST, 1);
@@ -53,7 +50,6 @@ public class MainGame extends JFrame {
         }
     }
 
-    // เครื่องนี้เข้าห้องของ Host
     public void joinGame(String ip, int port) {
         try {
             GameClient client = new GameClient(ip, port);

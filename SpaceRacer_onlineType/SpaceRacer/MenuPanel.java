@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 
-// หน้าเมนู: เลือกเล่น Offline (Solo/Duo/Trio) หรือ Online ผ่าน LAN (Host/Join)
 public class MenuPanel extends JPanel {
     private Image logo = new ImageIcon(getClass().getResource("img/logo3.png")).getImage();
     private JTextField portField = new JTextField("5000");
@@ -138,7 +137,6 @@ public class MenuPanel extends JPanel {
         repaint();
     }
 
-    // อ่านเลข port จากช่องกรอก ถ้าไม่ใช่ตัวเลขให้เตือน
     private int readPort() {
         try {
             int port = Integer.parseInt(portField.getText().trim());
@@ -167,7 +165,6 @@ public class MenuPanel extends JPanel {
             g.drawString("SPACE RACER", 200, 130);
         }
 
-        // แสดงคำแนะนำเฉพาะโหมดที่เลือก และเว้นระยะใต้ปุ่ม Select Mode
         g.setFont(new Font("Arial", Font.PLAIN, 16));
         if ("Offline".equals(selectedMode)) {
             g.setColor(Color.CYAN);

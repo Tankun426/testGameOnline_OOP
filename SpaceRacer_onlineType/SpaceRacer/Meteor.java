@@ -2,32 +2,28 @@ import java.awt.*;
 import java.util.Random;
 import javax.swing.*;
 
-// อุกกาบาต: สุ่มขนาด 3 แบบ และสุ่มความเร็ว 3 ระดับ
 public class Meteor extends GameObject {
-    private static Image[] pictures = new Image[27];
+    private static Image[] pictures = new Image[10];
     private static Random random = new Random();
     static {
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 10; i++) {
             pictures[i] = new ImageIcon(
-                    Meteor.class.getResource("img/meteoFriend" + (i + 1) + ".png")).getImage();
+                    Meteor.class.getResource("img/newMeteo" + (i + 1) + ".png")).getImage();
         }
     }
 
     private int picture;
 
-    // ใช้ตอนสร้างอุกกาบาตใหม่ (เครื่อง Host / Offline)
     public Meteor() {
         super(0, 0, 0, 0, null);
         reset();
     }
 
-    // ใช้ตอนเครื่องลูก (Client) สร้างจากข้อมูลที่ Host ส่งมา
     public Meteor(int x, int y, int size, int picture) {
         super(x, y, size, size, pictures[picture]);
         this.picture = picture;
     }
 
-    // สุ่มใหม่แล้วเริ่มตกจากข้างบน (คล้าย RainLetter)
     public void reset() {
         width = random.nextInt(61) + 20;
 
@@ -35,10 +31,10 @@ public class Meteor extends GameObject {
         x = random.nextInt(MainGame.GAME_WIDTH - width);
         y = -height - random.nextInt(400);
 
-        int speedLevel = random.nextInt(3) + 1; // สุ่มระดับ 1, 2, 3
-        speed = speedLevel * 2;                // ระดับ 1 = 2, ระดับ 2 = 4, ระดับ 3 = 6
+        int speedLevel = random.nextInt(3) + 1;
+        speed = speedLevel * 2;
 
-        picture = random.nextInt(27);
+        picture = random.nextInt(10);
         image = pictures[picture];
         alive = true;
     }
@@ -51,7 +47,6 @@ public class Meteor extends GameObject {
         return y > MainGame.GAME_HEIGHT;
     }
 
-    // ลูกเล็กยิงยากกว่า ได้คะแนนมากกว่า
     public int getPoints() {
         if (width <= 35) {
             return 30;

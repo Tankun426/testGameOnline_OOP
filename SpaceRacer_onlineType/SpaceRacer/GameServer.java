@@ -15,18 +15,16 @@ public class GameServer extends Thread {
     public GameServer(int port, GamePanel panel) throws IOException {
         this.port = port;
         this.panel = panel;
-        serverSocket = new ServerSocket(port); // ถ้า port ถูกใช้อยู่ จะ throw IOException
+        serverSocket = new ServerSocket(port);
     }
 
     public void run() {
         while (running) {
             try {
-                Socket socket = serverSocket.accept(); // รอจนมีคนต่อเข้ามา
-                // ปิด Nagle เพื่อส่งปุ่ม/สถานะเกมขนาดเล็กได้ทันที ไม่รอรวมแพ็กเก็ต
+                Socket socket = serverSocket.accept();
                 socket.setTcpNoDelay(true);
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-                // ห้องเต็ม หรือเกมเริ่มไปแล้ว -> ไม่รับ
                 if (panel.isStarted() || panel.getPlayerCount() >= 3) {
                     out.println("FULL");
                     out.flush();
@@ -34,8 +32,8 @@ public class GameServer extends Thread {
                     continue;
                 }
 
-                int id = panel.addShip();     // สร้างยานให้คนใหม่
-                out.println("ID " + id);      // บอกเขาว่าเป็นผู้เล่นคนที่เท่าไหร่
+                int id = panel.addShip(); 
+                out.println("ID " + id);
                 out.flush();
                 sockets.add(socket);
                 outs.add(out);
@@ -46,7 +44,6 @@ public class GameServer extends Thread {
         }
     }
 
-    // Thread รับปุ่มเคลื่อนที่จากเพื่อน 1 คน ข้อความหน้าตาแบบ "KEY 0 1 0 0"
     private void listenToPlayer(final Socket socket, final int id) {
         Thread receiver = new Thread(new Runnable() {
             public void run() {
@@ -62,14 +59,12 @@ public class GameServer extends Thread {
                     }
                 } catch (IOException e) {
                 }
-                // หลุดจากห้อง = ถือว่าตาย
                 panel.getShip(id).setLives(0);
             }
         });
         receiver.start();
     }
 
-    // ส่งสถานะเกมให้ทุกเครื่อง
     public void broadcast(String state) {
         for (PrintWriter out : outs) {
             out.print(state);
@@ -92,7 +87,6 @@ public class GameServer extends Thread {
         return port;
     }
 
-    // หา IP ของเครื่องนี้ในวง LAN (เช่น 192.168.1.5) เอาไว้บอกเพื่อน
     public static String getMyIP() {
         try {
             Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();

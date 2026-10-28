@@ -7,15 +7,15 @@ public class Bullet extends GameObject {
             Bullet.class.getResource("/img/WaLenti Cristiano Ronaldinho .jpg")).getImage();
 
     public Bullet(int x, int y, int ownerId) {
-        super(x, y, 20, 30, BulletPic);
+        super(x, y, 20, 20, BulletPic);
         this.ownerId = ownerId;
         this.speed = 12;
     }
 
     public void move() {
-        y = y - speed; // วิ่งขึ้นข้างบน
+        y = y - speed;
         if (y + height < 0) {
-            alive = false; // พ้นจอแล้ว
+            alive = false;
         }
     }
 

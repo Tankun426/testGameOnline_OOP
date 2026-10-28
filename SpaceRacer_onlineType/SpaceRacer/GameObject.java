@@ -1,6 +1,5 @@
 import java.awt.*;
 
-// คลาสแม่ (abstract) ของทุกอย่างที่อยู่ในเกม: ยาน, กระสุน, อุกกาบาต, ระเบิด
 public abstract class GameObject {
     protected int x, y;
     protected int width, height;
@@ -16,7 +15,6 @@ public abstract class GameObject {
         this.image = image;
     }
 
-    // ลูกแต่ละคลาสต้องเขียนเองว่าจะเคลื่อนที่ยังไง (Polymorphism)
     public abstract void move();
 
     public void draw(Graphics g) {
@@ -26,7 +24,6 @@ public abstract class GameObject {
         g.drawImage(image, x, y, width, height, null);
     }
 
-    // กรอบสี่เหลี่ยมไว้เช็คการชน
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }

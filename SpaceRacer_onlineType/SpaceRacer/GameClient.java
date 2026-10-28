@@ -2,9 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// Client (เครื่องที่กด Join) — แนวเดียวกับ ChatClient ใน ch08
-// - ส่งปุ่มที่กดไปให้ Host
-// - Thread นี้คอยรับสถานะเกมจาก Host แล้วส่งให้ GamePanel วาด
 public class GameClient extends Thread {
     private Socket socket;
     private BufferedReader in;
@@ -13,8 +10,7 @@ public class GameClient extends Thread {
 
     public GameClient(String ip, int port) throws IOException {
         socket = new Socket();
-        socket.connect(new InetSocketAddress(ip, port), 3000); // รอเชื่อมต่อไม่เกิน 3 วินาที
-        // ลดเวลารอส่งแพ็กเก็ตปุ่มและสถานะขนาดเล็ก
+        socket.connect(new InetSocketAddress(ip, port), 3000);
         socket.setTcpNoDelay(true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
@@ -29,8 +25,7 @@ public class GameClient extends Thread {
     }
 
     public void run() {
-        // ของที่จะวาดใน 1 เฟรม
-        // เก็บข้อมูลเฟรมใน ArrayList ระหว่าง parse เพื่อลดการคัดลอกซ้ำทุกครั้งที่ add()
+
         java.util.ArrayList<Ship> ships = new java.util.ArrayList<Ship>();
         java.util.ArrayList<Meteor> meteors = new java.util.ArrayList<Meteor>();
         java.util.ArrayList<Bullet> bullets = new java.util.ArrayList<Bullet>();
@@ -81,7 +76,6 @@ public class GameClient extends Thread {
             }
         } catch (IOException e) {
         }
-        // readLine() ได้ null หรือ error = Host ปิดเกม/สายหลุด
         panel.showMessage("Disconnected from host");
     }
 
